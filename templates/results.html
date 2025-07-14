@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anomaly Detection Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Anomaly Detection Results</h1>
+        <h2>Test Dataset Analysis</h2>
+        
+        <div id="results">
+            <h3>Anomalies Detected:</h3>
+            <ul>
+                {% for anomaly in anomalies %}
+                    <li>{{ anomaly }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="plot">
+            <h3>Line Plot Visualization:</h3>
+            <img src="{{ plot_url }}" alt="Line Plot of Test Data">
+        </div>
+
+        <a href="{{ url_for('index') }}">Upload New Files</a>
+    </div>
+</body>
+</html>

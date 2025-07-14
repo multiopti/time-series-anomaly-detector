@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Series Anomaly Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Time Series Anomaly Detection</h1>
+        <form action="/upload_normal" method="post" enctype="multipart/form-data">
+            <h2>Upload Normal Datasets</h2>
+            <input type="file" name="normal_files" multiple accept=".csv" required>
+            <button type="submit">Upload Normal Datasets</button>
+        </form>
+        <form action="/upload_test" method="post" enctype="multipart/form-data">
+            <h2>Upload Test Dataset</h2>
+            <input type="file" name="test_file" accept=".csv" required>
+            <button type="submit">Upload Test Dataset</button>
+        </form>
+        <form action="/analyze" method="post">
+            <h2>Analyze Test Dataset</h2>
+            <button type="submit">Analyze for Anomalies</button>
+        </form>
+    </div>
+</body>
+</html>
