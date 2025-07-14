@@ -2,27 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Series Anomaly Detection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Time Series Anomaly Detection</h1>
-        <form action="/upload_normal" method="post" enctype="multipart/form-data">
-            <h2>Upload Normal Datasets</h2>
-            <input type="file" name="normal_files" multiple accept=".csv" required>
-            <button type="submit">Upload Normal Datasets</button>
+        <h1 class="mt-5">Time Series Anomaly Detection</h1>
+        <h3>Upload Normal Datasets</h3>
+        <form id="normal-form" enctype="multipart/form-data">
+            <input type="file" name="files" multiple accept=".csv" required>
+            <button type="submit" class="btn btn-primary mt-2">Upload Normal Files</button>
         </form>
-        <form action="/upload_test" method="post" enctype="multipart/form-data">
-            <h2>Upload Test Dataset</h2>
-            <input type="file" name="test_file" accept=".csv" required>
-            <button type="submit">Upload Test Dataset</button>
+        <div id="normal-status" class="mt-2"></div>
+        
+        <h3 class="mt-4">Upload Test Dataset</h3>
+        <form id="test-form" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit" class="btn btn-primary mt-2">Upload Test File</button>
         </form>
-        <form action="/analyze" method="post">
-            <h2>Analyze Test Dataset</h2>
-            <button type="submit">Analyze for Anomalies</button>
+        <div id="test-status" class="mt-2"></div>
+        
+        <form action="/analyze" method="POST" class="mt-4">
+            <button type="submit" class="btn btn-success">Analyze</button>
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

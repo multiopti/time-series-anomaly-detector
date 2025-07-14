@@ -2,30 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anomaly Detection Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Anomaly Detection Results</h1>
-        <h2>Test Dataset Analysis</h2>
-        
-        <div id="results">
-            <h3>Anomalies Detected:</h3>
-            <ul>
-                {% for anomaly in anomalies %}
-                    <li>{{ anomaly }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div id="plot">
-            <h3>Line Plot Visualization:</h3>
-            <img src="{{ plot_url }}" alt="Line Plot of Test Data">
-        </div>
-
-        <a href="{{ url_for('index') }}">Upload New Files</a>
+        <h1 class="mt-5">Analysis Results</h1>
+        <p><strong>Result:</strong> {{ result }}</p>
+        <p><strong>Number of Anomalies:</strong> {{ anomaly_count }}</p>
+        <div id="plot"></div>
+        <a href="/" class="btn btn-primary mt-3">Back to Upload</a>
     </div>
+    <script>
+        var plotData = {{ plot_json | safe }};
+        Plotly.newPlot('plot', plotData.data, plotData.layout);
+    </script>
 </body>
 </html>

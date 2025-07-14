@@ -1,71 +1,20 @@
-# Time Series Anomaly Detector
+# Anomaly Detection Application
 
-This project is a web application designed for Time Series Anomaly Detection. It allows users to upload multiple CSV files containing normal datasets and a single test CSV file to analyze for anomalies. The application provides visualizations of the results, including mandatory line plots.
+This project is a Flask-based web application designed for anomaly detection. It allows users to upload files, which are then processed to identify anomalies. The results are displayed on a separate results page, complete with visualizations.
 
-## Features
+# Time Series Anomaly Detection Web App
 
-- Upload multiple normal CSV files and a single test CSV file.
-- Analyze the test data for anomalies based on the uploaded normal datasets.
-- Display results with visualizations, including line plots.
-- User-friendly interface for easy interaction.
+## Overview
+A Flask-based web application for detecting anomalies in time series data. Users can upload CSV files with Unix timestamps and sensor values, analyze a test file against normal data, and view results with an interactive line plot.
 
-## Project Structure
-
-```
-time-series-anomaly-detector
-├── app
-│   ├── __init__.py
-│   ├── routes.py
-│   ├── anomaly.py
-│   └── utils.py
-├── static
-│   └── style.css
-├── templates
-│   ├── index.html
-│   └── results.html
-├── uploads
-├── requirements.txt
-└── README.md
-```
-
-## Setup Instructions
-
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd time-series-anomaly-detector
-   ```
-
-2. Install the required dependencies:
-   ```
+## Setup
+1. Install dependencies:
+   ```bash
    pip install -r requirements.txt
-   ```
 
-3. Run the application:
-   ```
-   python -m app
-   ```
+   Run the application:bash
 
-4. Open your web browser and navigate to `http://127.0.0.1:5000` to access the application.
+python app.py
 
-## Usage Guidelines
+Access the app at http://localhost:5000.
 
-- Navigate to the home page to upload your normal datasets and test dataset.
-- After uploading, click on the analyze button to process the data.
-- View the results on the results page, which includes visualizations of the anomalies detected.
-
-## Dependencies
-
-- Flask or FastAPI
-- Pandas
-- Scikit-learn
-- Matplotlib (for plotting)
-- Any other necessary libraries listed in `requirements.txt`
-
-## Contributing
-
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
