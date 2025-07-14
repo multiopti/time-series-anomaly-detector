@@ -127,25 +127,33 @@ def analyze():
         # Create Plotly visualization
         traces = []
         # Plot each normal time series individually
-        # for filename, df in normal_dfs:
-        #     trace = go.Scatter(
-        #         x=df['datetime'],
-        #         y=df['sensor_value'],
-        #         mode='lines',
-        #         name=f'Normal: {filename}',
-        #         line=dict(color='blue')
-        #     )
-        #     traces.append(trace)
+        for filename, df in normal_dfs:
+            trace = go.Scatter(
+                x=df['datetime'],
+                y=df['sensor_value'].tolist(),
+                mode='lines',
+                name=f'Normal: {filename}',
+                line=dict(color='blue')
+            )
+            traces.append(trace)
         
         # Plot test data
+
+        logger.info("Type of test_df['sensor_value']: %s", type(test_df['sensor_value']))
+        logger.info("Head of test_df['sensor_value']:\n%s", test_df['sensor_value'].head())
+        logger.info("Columns of test_df: %s", test_df.columns.tolist())
+        logger.info(f"y: {test_df['sensor_value'].tolist()}")
+
         trace_test = go.Scatter(
             x=test_df['datetime'],
-            y=test_df['sensor_value'],
+            y=test_df['sensor_value'].tolist(),
             mode='lines',
             name='Test Data',
             line=dict(color='green')
         )
         traces.append(trace_test)
+
+        
         
         # Plot anomalies
         trace_anomalies = go.Scatter(
