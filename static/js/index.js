@@ -1,11 +1,26 @@
 let normalFilesUploaded = false;
 let testFileUploaded = false;
 
+function showStatus(message, type = "info") {
+    let statusDiv = document.getElementById('statusMessage');
+    if (!statusDiv) {
+        statusDiv = document.createElement('div');
+        statusDiv.id = 'statusMessage';
+        statusDiv.className = 'alert mt-3';
+        document.querySelector('.container').prepend(statusDiv);
+    }
+    statusDiv.className = `alert alert-${type} mt-3`;
+    statusDiv.textContent = message;
+}
+
 document.getElementById('normalForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData();
     const files = document.getElementById('normalFiles').files;
-    
+    if (!files.length) {
+        showStatus('Please select at least one normal data file.', 'warning');
+        return;
+    }
+    const formData = new FormData();
     for (let file of files) {
         formData.append('files', file);
     }
@@ -16,24 +31,27 @@ document.getElementById('normalForm').addEventListener('submit', async (e) => {
             body: formData
         });
         const data = await response.json();
-        
         if (response.ok) {
             normalFilesUploaded = true;
             updateAnalyzeButton();
-            alert(data.message);
+            showStatus(data.message || 'Normal files uploaded successfully.', 'success');
         } else {
-            alert(data.error);
+            showStatus(data.error || 'Error uploading normal files.', 'danger');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error uploading files');
+        showStatus('Error uploading files', 'danger');
     }
 });
 
 document.getElementById('testForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData();
     const file = document.getElementById('testFile').files[0];
+    if (!file) {
+        showStatus('Please select a test data file.', 'warning');
+        return;
+    }
+    const formData = new FormData();
     formData.append('file', file);
 
     try {
@@ -42,32 +60,52 @@ document.getElementById('testForm').addEventListener('submit', async (e) => {
             body: formData
         });
         const data = await response.json();
-        
         if (response.ok) {
             testFileUploaded = true;
             updateAnalyzeButton();
-            alert(data.message);
+            showStatus(data.message || 'Test file uploaded successfully.', 'success');
         } else {
-            alert(data.error);
+            showStatus(data.error || 'Error uploading test file.', 'danger');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error uploading file');
+        showStatus('Error uploading file', 'danger');
     }
 });
 
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
+    showStatus('Analyzing data, please wait...', 'info');
     try {
         const response = await fetch('/analyze', {
             method: 'POST'
         });
-        
+        const data = await response.json();
         if (response.ok) {
-            const result = await response.text();
-            document.body.innerHTML = result;
+            // Show results
+            document.getElementById('results').innerHTML = `
+                <div class="container">
+                    <h1 class="mt-5">Analysis Results</h1>
+                    <p><strong>Result:</strong> ${data.result}</p>
+                    <p><strong>Number of Anomalies:</strong> ${data.anomaly_count}</p>
+                    <div id="plot"></div>
+                    <a href="/" class="btn btn-primary mt-3">Back to Upload</a>
+                </div>
+            `;
+            // Render Plotly plot
+            if (data.plot_json && window.Plotly) {
+                const plotData = JSON.parse(data.plot_json);
+                Plotly.newPlot('plot', plotData.data, plotData.layout);
+            }
         } else {
-            alert('Analysis failed');
+            showStatus('Analysis failed', 'danger');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error
+        showStatus('Error during analysis', 'danger');
+    }
+});
+
+function updateAnalyzeButton() {
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    analyzeBtn.disabled = !(normalFilesUploaded && testFileUploaded);
+}

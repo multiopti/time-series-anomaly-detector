@@ -1,23 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Analysis Results</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <h1 class="mt-5">Analysis Results</h1>
-        <p><strong>Result:</strong> {{ result }}</p>
-        <p><strong>Number of Anomalies:</strong> {{ anomaly_count }}</p>
-        <div id="plot"></div>
-        <a href="/" class="btn btn-primary mt-3">Back to Upload</a>
-    </div>
-    <script>
-        var plotData = {{ plot_json | safe }};
-        Plotly.newPlot('plot', plotData.data, plotData.layout);
-    </script>
-</body>
-</html>
+<div class="container">
+    <h1 class="mt-5">Analysis Results</h1>
+    <p><strong>Result:</strong> {{ result }}</p>
+    <p><strong>Number of Anomalies:</strong> {{ anomaly_count }}</p>
+    <div id="plot"></div>
+    <a href="/" class="btn btn-primary mt-3">Back to Upload</a>
+</div>
+
