@@ -1,33 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Time Series Anomaly Detection</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1 class="mt-5">Time Series Anomaly Detection</h1>
-        <h3>Upload Normal Datasets</h3>
-        <form id="normal-form" enctype="multipart/form-data">
-            <input type="file" name="files" multiple accept=".csv" required>
-            <button type="submit" class="btn btn-primary mt-2">Upload Normal Files</button>
-        </form>
-        <div id="normal-status" class="mt-2"></div>
-        
-        <h3 class="mt-4">Upload Test Dataset</h3>
-        <form id="test-form" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".csv" required>
-            <button type="submit" class="btn btn-primary mt-2">Upload Test File</button>
-        </form>
-        <div id="test-status" class="mt-2"></div>
-        
-        <form action="/analyze" method="POST" class="mt-4">
-            <button type="submit" class="btn btn-success">Analyze</button>
-        </form>
+{% extends "base.html" %}
+
+{% block content %}
+<h2>File-based Anomaly Detection</h2>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Upload Normal Data</h3>
+                </div>
+                <div class="card-body">
+                    <form id="normalForm">
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="normalFiles" multiple accept=".csv">
+                            <small class="text-muted">Select one or more CSV files containing normal sensor data</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Normal Files</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Upload Test Data</h3>
+                </div>
+                <div class="card-body">
+                    <form id="testForm">
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="testFile" accept=".csv">
+                            <small class="text-muted">Select a CSV file to analyze for anomalies</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Test File</button>
+                    </form>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="btn btn-success btn-lg w-100" disabled>Analyze</button>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-</body>
-</html>
+    <div id="results"></div>
+</div>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

@@ -176,11 +176,18 @@ def analyze():
         plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         
         logger.info(f"Analysis complete. Result: {result}, Anomalies: {anomaly_count}")
-        return render_template('results.html', result=result, anomaly_count=anomaly_count, plot_json=plot_json)
+        return jsonify({
+            "result": result,
+            "anomaly_count": anomaly_count,
+            "plot_json": plot_json
+        })
     except Exception as e:
         logger.error(f"Analysis error: {str(e)}")
-        return render_template('results.html', result="Error", anomaly_count=0, plot_json={}, error=f"Analysis error: {str(e)}")
-
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/window-based')
+def window_based():
+    return render_template('window_based.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
