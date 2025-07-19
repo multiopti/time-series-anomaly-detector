@@ -181,6 +181,9 @@ def analyze():
         logger.error(f"Analysis error: {str(e)}")
         return render_template('results.html', result="Error", anomaly_count=0, plot_json={}, error=f"Analysis error: {str(e)}")
 
+@app.route('/window-based')
+def window_based():
+    return render_template('window_based.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
