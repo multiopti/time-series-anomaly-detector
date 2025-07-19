@@ -189,5 +189,28 @@ def analyze():
 def window_based():
     return render_template('window_based.html')
 
+@app.route('/upload/training', methods=['POST'])
+def upload_training():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    file = request.files['file']
+    if file and file.filename.endswith('.csv'):
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], 'training.csv')
+        file.save(filename)
+        df = pd.read_csv(filename)
+        # Validate columns
+        if not set(['timestamp', 'sensor_value']).issubset(df.columns):
+            return jsonify({'error': 'CSV must have timestamp and sensor_value columns'}), 400
+
+        # Convert timestamps for plotting
+        df['datetime'] = pd.to_datetime(df['timestamp'], unit='s')
+        data = {
+            'timestamps': df['datetime'].astype(str).tolist(),
+            'values': df['sensor_value'].tolist()
+        }
+        return jsonify(data)
+    return jsonify({'error': 'Invalid file format'}), 400
+
 if __name__ == '__main__':
     app.run(debug=True)
