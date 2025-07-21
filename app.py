@@ -212,5 +212,77 @@ def upload_training():
         return jsonify(data)
     return jsonify({'error': 'Invalid file format'}), 400
 
+
+@app.route('/analyze/window', methods=['POST'])
+def analyze_window():
+    try:
+        data = request.get_json()
+        selected_windows = data.get('selected_windows', [])
+        window_size = data.get('window_size', 50)
+
+        # Load training data
+        training_file = os.path.join(app.config['UPLOAD_FOLDER'], 'training.csv')
+        if not os.path.exists(training_file):
+            return jsonify({'error': 'No training data found.'}), 400
+        train_df = pd.read_csv(training_file)
+        train_df = train_df.sort_values('timestamp')
+
+        # Load test data
+        test_file = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.lower().startswith('test')]
+        if not test_file:
+            return jsonify({'error': 'No test file found.'}), 400
+        test_df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], test_file[0]))
+        test_df = test_df.sort_values('timestamp')
+
+        # Mark anomaly windows in training data
+        anomaly_indices = set()
+        for window in selected_windows:
+            anomaly_indices.update(range(window['start_idx'], window['end_idx'] + 1))
+        train_df['is_anomaly'] = train_df.index.isin(anomaly_indices)
+
+        # Compute normal stats from non-anomalous windows
+        normal_train = train_df[~train_df['is_anomaly']]
+        mean = normal_train['sensor_value'].mean()
+        std = normal_train['sensor_value'].std()
+
+        # Detect anomalies in test data (e.g., >2 std from mean)
+        test_df['anomaly'] = abs(test_df['sensor_value'] - mean) > 2 * std
+        anomaly_count = int(test_df['anomaly'].sum())
+
+        # Plot test data and highlight anomalies
+        import plotly.graph_objs as go
+
+        trace_normal = go.Scatter(
+            x=test_df['timestamp'].tolist(),  # <-- convert to list
+            y=test_df['sensor_value'].tolist(),
+            mode='lines+markers',
+            name='Test Data',
+            marker=dict(color='blue')
+        )
+        trace_anomaly = go.Scatter(
+            x=test_df[test_df['anomaly']]['timestamp'].tolist(),  # <-- convert to list
+            y=test_df[test_df['anomaly']]['sensor_value'].tolist(),
+            mode='markers',
+            name='Anomalies',
+            marker=dict(color='red', size=10, symbol='x')
+        )
+
+        layout = go.Layout(
+            title='Test Data with Anomalies',
+            xaxis=dict(title='Timestamp'),
+            yaxis=dict(title='Sensor Value')
+        )
+        fig = go.Figure(data=[trace_normal, trace_anomaly], layout=layout)
+        
+        import plotly.utils
+        plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return jsonify({
+            'anomaly_count': anomaly_count,
+            'plot': plot_json
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

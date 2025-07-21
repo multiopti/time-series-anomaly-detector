@@ -51,32 +51,27 @@ function plotTrainingData(data) {
         x: data.timestamps,
         y: data.values,
         type: 'scatter',
-        mode: 'lines',
+        mode: 'lines+markers', // <-- this is the key change
         name: 'Training Data'
     }], {
         title: 'Training Time Series',
         dragmode: 'select',
         xaxis: { title: 'Timestamp' },
         yaxis: { title: 'Sensor Value' }
-    });
-
-    // Enable selection mode
-    document.getElementById('selectWindowBtn').onclick = () => {
-        Plotly.relayout('timeSeriesPlot', { dragmode: 'select' });
-    };
-
-    document.getElementById('timeSeriesPlot').on('plotly_selected', function(eventData) {
-        if (eventData && eventData.points.length > 0) {
-            const startIdx = eventData.points[0].pointIndex;
-            const endIdx = eventData.points[eventData.points.length - 1].pointIndex;
-            selectedWindows.push({ start_idx: startIdx, end_idx: endIdx });
-            showStatus(`Selected window: ${startIdx} to ${endIdx}`, 'info');
-            updateSelectedWindowsList();
-            updateAnalyzeButton();
-        }
+    }).then(function (plotDiv) {
+        plotDiv.on('plotly_selected', function (eventData) {
+            console.log('plotly_selected event fired', eventData);
+            if (eventData && eventData.points.length > 0) {
+                const startIdx = eventData.points[0].pointNumber;
+                const endIdx = eventData.points[eventData.points.length - 1].pointNumber;
+                selectedWindows.push({ start_idx: startIdx, end_idx: endIdx });
+                showStatus(`Selected window: ${startIdx} to ${endIdx}`, 'info');
+                updateSelectedWindowsList();
+                updateAnalyzeButton();
+            }
+        });
     });
 }
-
 document.getElementById('clearWindowsBtn').addEventListener('click', () => {
     selectedWindows = [];
     updateSelectedWindowsList();
@@ -145,6 +140,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
                     <div id="plot"></div>
                 </div>
             `;
+            // Render Plotly plot
             if (data.plot && window.Plotly) {
                 const plotData = JSON.parse(data.plot);
                 Plotly.newPlot('plot', plotData.data, plotData.layout);

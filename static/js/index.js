@@ -82,16 +82,21 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
         const data = await response.json();
         if (response.ok) {
             // Show results
+            let anomalyMsg = '';
+            if (data.anomaly_count === 0 || data.anomaly_count === "0") {
+                anomalyMsg = `<div class="alert alert-info mt-3">No anomalies found in the test data.</div>`;
+            }
             document.getElementById('results').innerHTML = `
                 <div class="container">
                     <h1 class="mt-5">Analysis Results</h1>
                     <p><strong>Result:</strong> ${data.result}</p>
                     <p><strong>Number of Anomalies:</strong> ${data.anomaly_count}</p>
+                    ${anomalyMsg}
                     <div id="plot"></div>
                     <a href="/" class="btn btn-primary mt-3">Back to Upload</a>
                 </div>
             `;
-            // Render Plotly plot
+            // Render Plotly plot (always attempt if plot_json is present)
             if (data.plot_json && window.Plotly) {
                 const plotData = JSON.parse(data.plot_json);
                 Plotly.newPlot('plot', plotData.data, plotData.layout);
